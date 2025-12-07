@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Collection Tracker</title>
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --primary-dark: #388E3C;
+      --secondary: #FF9800;
+      --danger: #F44336;
+      --light: #f5f5f5;
+      --dark: #333;
+      --border: #ddd;
+      --text: #333;
+      --text-light: #666;
+      --white: #ffffff;
+      --shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--light);
+      padding: 16px;
+      padding-top: 60px; /* Space for fixed header */
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--white);
+      box-shadow: var(--shadow);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .hamburger {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--dark);
+      padding: 4px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .section {
+      background-color: var(--white);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: var(--primary-dark);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .expense-item {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .expense-item input {
+      flex: 1;
+    }
+
+    .remove-expense-btn {
+      background-color: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .add-expense-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+
+    .colleague-list {
+      list-style: none;
+    }
+
+    .colleague-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .colleague-item:last-child {
+      border-bottom: none;
+    }
+
+    .colleague-name {
+      font-size: 1rem;
+      flex-grow: 1;
+    }
+
+    .add-btn, .remove-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
+    }
+
+    .add-btn[aria-disabled="true"] {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .add-btn:not([aria-disabled="true"]):hover {
+      background-color: var(--primary-dark);
+    }
+
+    .remove-btn {
+      background-color: var(--danger);
+    }
+
+    .remove-btn:hover {
+      background-color: #d32f2f;
+    }
+
+    .submit-btn {
+      background-color: var(--secondary);
+      color: var(--dark);
+      border: none;
+      border-radius: 4px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover {
+      background-color: #F57C00;
+    }
+
+    .reminder-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .reminder-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reminder-toggle input {
+      width: auto;
+    }
+
+    .reminder-status {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    .notification-permission {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: var(--white);
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+    }
+
+    .modal textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      margin-bottom: 12px;
+      resize: vertical;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .copy-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .whatsapp-btn {
+      background-color: #25D366;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+
+    .whatsapp-btn:hover {
+      background-color: #128C7E;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--dark);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 4px;
+      z-index: 1001;
+      display: none;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: var(--white);
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      z-index: 999;
+      transition: left 0.3s ease;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 998;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    /* New Button Styles */
+    .collection-btn, .reminder-20th-btn {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 8px;
+      width: 100%;
+      margin-bottom: 8px; /* Space between buttons */
+    }
+
+    .collection-btn:hover, .reminder-20th-btn:hover {
+      background-color: #0b7dda;
+    }
+
+    @media (min-width: 600px) {
+      body {
+        padding: 24px;
+        padding-top: 70px;
+      }
+
+      .hamburger {
+        display: none;
+      }
+
+      .sidebar, .overlay {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🎂 Birthday Collection</div>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">☰</button>
+  </header>
+
+  <div class="container">
+    <div class="section">
+      <h2>Collection Settings</h2>
+      <div class="form-group">
+        <label for="collectionAmount">Collection Amount per Person (₹):</label>
+        <input type="number" id="collectionAmount" min="0" step="0.01" value="100">
+      </div>
+      <div class="form-group">
+          <label for="previousMonthBalance">Previous Month Remaining Balance (₹):</label>
+          <input type="number" id="previousMonthBalance" min="0" step="0.01" value="0">
+      </div>
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="addExpensesToggle">
+          <label for="addExpensesToggle">Add Expenses</label>
+        </div>
+        <div id="expensesSection" style="display: none;">
+          <h3>Expenses</h3>
+          <div id="expensesList">
+            <!-- Expense items will be added here dynamically -->
+          </div>
+          <button type="button" class="add-expense-btn" id="addExpenseBtn">+ Add Expense Item</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Colleagues</h2>
+      <ul class="colleague-list" id="colleagueList" role="list">
+        <!-- Populated by JS -->
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Paid List</h2>
+      <ul class="colleague-list" id="paidList" role="list">
+        <!-- Populated by JS -->
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Reminder Settings</h2>
+      <div class="reminder-section">
+        <div class="reminder-toggle">
+          <input type="checkbox" id="reminderToggle">
+          <label for="reminderToggle">Enable Monthly Reminder (20th)</label>
+        </div>
+        <div class="reminder-status" id="reminderStatus">Reminder is disabled</div>
+        <div class="notification-permission" id="notificationPermission">
+          Notification permission: <span id="permissionStatus">Unknown</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Buttons -->
+    <button class="collection-btn" id="collectionBtn">Collection Message</button>
+    <button class="reminder-20th-btn" id="reminder20thBtn">Every 20th Reminder</button>
+
+    <button class="submit-btn" id="submitBtn">Generate Financial WhatsApp Message</button> <!-- Renamed original button -->
+
+  </div>
+
+  <div class="modal" id="whatsappModal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeModalBtn">&times;</button>
+      <h3>WhatsApp Message</h3>
+      <textarea id="whatsappMessage" readonly></textarea>
+      <div class="modal-buttons">
+        <button class="copy-btn" id="copyMessageBtn">Copy Message</button>
+        <button class="whatsapp-btn" id="openWhatsAppBtn">Open WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Item updated</div>
+
+  <div class="sidebar" id="sidebar">
+    <h3>Menu</h3>
+    <p>Manage your birthday collection list.</p>
+    <!-- Added About link -->
+    <a href="#" id="aboutLink" style="display: block; margin-top: 10px; color: var(--primary); text-decoration: none;">About</a>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <script>
+    // ============= CONFIGURATION =============
+    // Update this list to manage your colleagues
+    const colleagues = [
+      "Shashank",
+      "Vivid",
+      "Laxmi",
+      "Surjan",
+      "Rahila",
+      "Pritom",
+      "Ahmed",
+      "Padmakar",
+      "Nandan",
+      "Nikhil",
+      "Venkatesu",
+      "Depthi",
+      "Shwetha"
+
+    ];
+
+    // Storage keys
+    const PAID_LIST_KEY = "birthday_paid_list_v1"; // Now uses localStorage
+    const REMINDER_ENABLED_KEY = "birthday_reminder_enabled_v1";
+    const COLLECTION_AMOUNT_KEY = "collection_amount_v1";
+    const PREVIOUS_BALANCE_KEY = "previous_balance_v1";
+    const EXPENSES_ENABLED_KEY = "expenses_enabled_v1";
+    const EXPENSES_LIST_KEY = "expenses_list_v1";
+
+    // ============= DOM ELEMENTS =============
+    const colleagueListEl = document.getElementById('colleagueList');
+    const paidListEl = document.getElementById('paidList');
+    const submitBtn = document.getElementById('submitBtn');
+    const collectionBtn = document.getElementById('collectionBtn'); // New Element
+    const reminder20thBtn = document.getElementById('reminder20thBtn'); // New Element
+    const whatsappModal = document.getElementById('whatsappModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const whatsappMessageEl = document.getElementById('whatsappMessage');
+    const openWhatsAppBtn = document.getElementById('openWhatsAppBtn');
+    const copyMessageBtn = document.getElementById('copyMessageBtn');
+    const toastEl = document.getElementById('toast');
+    const reminderToggle = document.getElementById('reminderToggle');
+    const reminderStatus = document.getElementById('reminderStatus');
+    const permissionStatusEl = document.getElementById('permissionStatus');
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const collectionAmountInput = document.getElementById('collectionAmount');
+    const previousMonthBalanceInput = document.getElementById('previousMonthBalance');
+    const addExpensesToggle = document.getElementById('addExpensesToggle');
+    const expensesSection = document.getElementById('expensesSection');
+    const expensesListEl = document.getElementById('expensesList');
+    const addExpenseBtn = document.getElementById('addExpenseBtn');
+    const aboutLink = document.getElementById('aboutLink'); // New Element
+
+    // ============= STATE MANAGEMENT =============
+    // Changed: Load from localStorage instead of sessionStorage
+    let paidList = JSON.parse(localStorage.getItem(PAID_LIST_KEY)) || [];
+    let collectionAmount = parseFloat(localStorage.getItem(COLLECTION_AMOUNT_KEY)) || 100.00;
+    let previousMonthBalance = parseFloat(localStorage.getItem(PREVIOUS_BALANCE_KEY)) || 0.00;
+    let expensesEnabled = localStorage.getItem(EXPENSES_ENABLED_KEY) === 'true';
+    let expensesList = JSON.parse(localStorage.getItem(EXPENSES_LIST_KEY)) || [];
+
+    // ============= HELPER FUNCTIONS =============
+    function showToast(message) {
+      toastEl.textContent = message;
+      toastEl.style.display = 'block';
+      setTimeout(() => {
+        toastEl.style.display = 'none';
+      }, 3000);
+    }
+
+    // Changed: Save to localStorage instead of sessionStorage
+    function savePaidList() {
+      localStorage.setItem(PAID_LIST_KEY, JSON.stringify(paidList));
+    }
+
+    function saveCollectionAmount() {
+        localStorage.setItem(COLLECTION_AMOUNT_KEY, collectionAmountInput.value);
+    }
+
+    function savePreviousMonthBalance() {
+        localStorage.setItem(PREVIOUS_BALANCE_KEY, previousMonthBalanceInput.value);
+    }
+
+    function saveExpensesEnabled() {
+        localStorage.setItem(EXPENSES_ENABLED_KEY, addExpensesToggle.checked);
+    }
+
+    function saveExpensesList() {
+        localStorage.setItem(EXPENSES_LIST_KEY, JSON.stringify(expensesList));
+    }
+
+    function updateUI() {
+      renderColleagueList();
+      renderPaidList();
+      collectionAmountInput.value = collectionAmount;
+      previousMonthBalanceInput.value = previousMonthBalance;
+      addExpensesToggle.checked = expensesEnabled;
+      expensesSection.style.display = expensesEnabled ? 'block' : 'none';
+      if (expensesEnabled) {
+          renderExpensesList();
+      }
+    }
+
+    function renderColleagueList() {
+      colleagueListEl.innerHTML = '';
+      colleagues.forEach(name => {
+        const isPaid = paidList.includes(name);
+        const li = document.createElement('li');
+        li.className = 'colleague-item';
+        li.setAttribute('role', 'listitem');
+
+        li.innerHTML = `
+          <span class="colleague-name">${name}</span>
+          <button class="add-btn" 
+                  data-name="${name}" 
+                  ${isPaid ? 'aria-disabled="true"' : ''}
+                  ${isPaid ? 'disabled' : ''}
+                  aria-label="${isPaid ? 'Already paid' : 'Add ' + name}">${isPaid ? '✓' : '+'}</button>
+        `;
+
+        colleagueListEl.appendChild(li);
+      });
+
+      document.querySelectorAll('.add-btn:not([disabled])').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const name = e.currentTarget.dataset.name;
+          if (!paidList.includes(name)) {
+            paidList.push(name);
+            savePaidList(); // Save to localStorage
+            updateUI();
+            showToast(`Added ${name} to paid list`);
+          }
+        });
+      });
+    }
+
+    function renderPaidList() {
+      paidListEl.innerHTML = '';
+      if (paidList.length === 0) {
+        paidListEl.innerHTML = '<li class="empty-list">No one has paid yet</li>';
+        return;
+      }
+
+      paidList.forEach(name => {
+        const li = document.createElement('li');
+        li.className = 'colleague-item';
+        li.setAttribute('role', 'listitem');
+
+        li.innerHTML = `
+          <span class="colleague-name">${name}</span>
+          <button class="remove-btn" 
+                  data-name="${name}" 
+                  aria-label="Remove ${name}">🗑️</button>
+        `;
+
+        paidListEl.appendChild(li);
+      });
+
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const name = e.currentTarget.dataset.name;
+          paidList = paidList.filter(n => n !== name);
+          savePaidList(); // Save to localStorage
+          updateUI();
+          showToast(`Removed ${name} from paid list`);
+        });
+      });
+    }
+
+    function renderExpensesList() {
+        expensesListEl.innerHTML = '';
+        expensesList.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'expense-item';
+            div.innerHTML = `
+                <input type="text" class="expense-name" value="${item.name}" placeholder="Item Name" data-index="${index}">
+                <input type="number" class="expense-price" value="${item.price}" min="0" step="0.01" placeholder="Price" data-index="${index}">
+                <button type="button" class="remove-expense-btn" data-index="${index}">X</button>
+            `;
+            expensesListEl.appendChild(div);
+        });
+
+        document.querySelectorAll('.expense-name, .expense-price').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                if (e.target.classList.contains('expense-name')) {
+                    expensesList[index].name = e.target.value;
+                } else if (e.target.classList.contains('expense-price')) {
+                    expensesList[index].price = parseFloat(e.target.value) || 0;
+                }
+                saveExpensesList();
+            });
+        });
+
+        document.querySelectorAll('.remove-expense-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                expensesList.splice(index, 1);
+                saveExpensesList();
+                updateUI();
+                showToast('Expense item removed');
+            });
+        });
+    }
+
+
+    // ============= CALCULATION FUNCTIONS =============
+    function calculateTotalCollection() {
+        const amountPerPerson = parseFloat(collectionAmountInput.value) || 0;
+        const previousBalance = parseFloat(previousMonthBalanceInput.value) || 0;
+        return (paidList.length * amountPerPerson) + previousBalance;
+    }
+
+    function calculateTotalExpenses() {
+        return expensesList.reduce((total, item) => total + (item.price || 0), 0);
+    }
+
+    function calculateAvailableFunds() {
+        return calculateTotalCollection() - calculateTotalExpenses();
+    }
+
+    // ============= MODIFIED FUNCTION FOR EMOJIS AND FINANCES (REPLACED EMOJIS) =============
+    function generateWhatsAppMessage() {
+      const allNames = new Set(colleagues);
+      const paidNames = colleagues.filter(name => paidList.includes(name));
+      const unpaidNames = colleagues.filter(name => !paidList.includes(name));
+
+      let message = "Birthday Collection Status:\n\n";
+
+      if (paidNames.length > 0) {
+        message += "*PAID* ✅\n\n"; // Changed emoji representation
+        paidNames.forEach(name => {
+          message += `- ${name}\n`;
+        });
+        message += "\n";
+      }
+
+      if (unpaidNames.length > 0) {
+        message += "*NOT* *PAID*❌\n\n"; // Changed emoji representation
+        unpaidNames.forEach(name => {
+          message += `- ${name}\n`;
+        });
+        message += "\n";
+      } else {
+        message += "All colleagues have paid! (🎉)\n\n"; // Changed emoji representation
+      }
+
+      const totalCollection = calculateTotalCollection();
+      const totalExpenses = calculateTotalExpenses();
+      const availableFunds = calculateAvailableFunds();
+      const previousBalance = parseFloat(previousMonthBalanceInput.value) || 0;
+
+      message += "*FINANCIAL SUMMARY*\n";
+      if (previousBalance > 0) {
+          message += `Previous Month Balance: ₹${previousBalance.toFixed(2)}\n`;
+      }
+      message += `Total Collected (This Month + Previous): ₹${totalCollection.toFixed(2)} (${paidList.length} x ₹${(parseFloat(collectionAmountInput.value) || 0).toFixed(2)})\n`;
+      message += `Total Expenses: ₹${totalExpenses.toFixed(2)}\n`;
+      message += `Available Funds: ₹${availableFunds.toFixed(2)}\n`;
+
+      if (expensesList.length > 0) {
+          message += "\n*Expense Details:*\n";
+          expensesList.forEach(item => {
+              message += `- ${item.name}: ₹${item.price.toFixed(2)}\n`;
+          });
+      }
+
+      return message;
+    }
+
+    // ============= NEW FUNCTION FOR COLLECTION MESSAGE (REPLACED EMOJIS) =============
+    function generateCollectionMessage() {
+        const allNames = new Set(colleagues);
+        const paidNames = colleagues.filter(name => paidList.includes(name));
+        const unpaidNames = colleagues.filter(name => !paidList.includes(name));
+
+        let message = "*PAYMENT* *REMINDER!!.*\n\n_Please_ _Pay_ _if_ _you_ _are_ _yet_ _to_ _pay_. _Ignore_ _if_ _paid_ \n\nGpay/Phonepe📱\n\n8837229278 \n\n";
+
+        if (paidNames.length > 0) {
+          message += "*PAID*✅\n"; // Changed emoji representation
+          paidNames.forEach(name => {
+            message += `- ${name}\n`;
+          });
+          message += "\n";
+        }
+
+        if (unpaidNames.length > 0) {
+          message += "*NOT* *PAID*❌\n"; // Changed emoji representation
+          unpaidNames.forEach(name => {
+            message += `- ${name}\n`;
+          });
+        } else {
+          message += "All colleagues have paid! (🎉)"; // Changed emoji representation
+        }
+
+        return message;
+    }
+
+    // ============= NEW FUNCTION FOR 20TH REMINDER MESSAGE =============
+    function generate20thReminderMessage() {
+        const collectionAmount = parseFloat(collectionAmountInput.value) || 100; // Use current amount or default to 100
+        return `Hi Team👥 ,Payday Reminder💵could you pop *Rs* *${collectionAmount}* into the birthday fund? Small price for big smiles😊.\n\nGpay/Phonepe📱\n\n8837229278 \n\nThanks!\n`;
+    }
+
+    // ============= NOTIFICATION REMINDER LOGIC =============
+    function updateReminderStatus() {
+      const isEnabled = localStorage.getItem(REMINDER_ENABLED_KEY) === 'true';
+      reminderToggle.checked = isEnabled;
+      reminderStatus.textContent = isEnabled ?
+        'Reminder is enabled (check browser notifications)' :
+        'Reminder is disabled';
+
+      if ('Notification' in window) {
+        permissionStatusEl.textContent = Notification.permission;
+      }
+    }
+
+    function requestNotificationPermission() {
+      if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          permissionStatusEl.textContent = permission;
+        });
+      }
+    }
+
+    function checkAndShowReminder() {
+      const today = new Date();
+      const isReminderDay = today.getDate() === 20;
+      const isEnabled = localStorage.getItem(REMINDER_ENABLED_KEY) === 'true';
+
+      if (isReminderDay && isEnabled && Notification.permission === 'granted') {
+        new Notification('Birthday Collection Reminder', {
+          body: 'Reminder: Birthday collection due today (20th). Please collect from remaining colleagues.',
+          icon: 'image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" fill="white" font-size="12">🎂</text></svg>'
+        });
+      }
+    }
+
+    function scheduleReminderCheck() {
+      setInterval(checkAndShowReminder, 60 * 60 * 1000);
+      checkAndShowReminder();
+    }
+
+    // ============= EVENT LISTENERS =============
+    submitBtn.addEventListener('click', () => { // Original financial message
+      const message = generateWhatsAppMessage();
+      whatsappMessageEl.value = message;
+      whatsappModal.style.display = 'flex';
+    });
+
+    collectionBtn.addEventListener('click', () => { // New collection message
+        const message = generateCollectionMessage();
+        whatsappMessageEl.value = message;
+        whatsappModal.style.display = 'flex';
+    });
+
+    reminder20thBtn.addEventListener('click', () => { // New 20th reminder message
+        const message = generate20thReminderMessage();
+        whatsappMessageEl.value = message;
+        whatsappModal.style.display = 'flex';
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      whatsappModal.style.display = 'none';
+    });
+
+    openWhatsAppBtn.addEventListener('click', () => {
+      const message = whatsappMessageEl.value;
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      showToast('WhatsApp opened with message');
+    });
+
+    copyMessageBtn.addEventListener('click', () => {
+      whatsappMessageEl.select();
+      document.execCommand('copy');
+      showToast('Message copied to clipboard');
+    });
+
+    reminderToggle.addEventListener('change', (e) => {
+      const isEnabled = e.target.checked;
+      localStorage.setItem(REMINDER_ENABLED_KEY, isEnabled);
+      updateReminderStatus();
+
+      if (isEnabled && Notification.permission !== 'granted') {
+        requestNotificationPermission();
+      }
+    });
+
+    collectionAmountInput.addEventListener('input', (e) => {
+        collectionAmount = parseFloat(e.target.value) || 0;
+        saveCollectionAmount();
+    });
+
+    previousMonthBalanceInput.addEventListener('input', (e) => {
+        previousMonthBalance = parseFloat(e.target.value) || 0;
+        savePreviousMonthBalance();
+    });
+
+    addExpensesToggle.addEventListener('change', (e) => {
+        expensesEnabled = e.target.checked;
+        saveExpensesEnabled();
+        expensesSection.style.display = expensesEnabled ? 'block' : 'none';
+        if (expensesEnabled) {
+            if (expensesList.length === 0) {
+                expensesList.push({ name: '', price: 0 });
+                saveExpensesList();
+            }
+            renderExpensesList();
+        }
+    });
+
+    addExpenseBtn.addEventListener('click', () => {
+        expensesList.push({ name: '', price: 0 });
+        saveExpensesList();
+        renderExpensesList();
+    });
+
+    // Sidebar toggle
+    hamburgerBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+
+    // About link click (example)
+    aboutLink.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default link behavior
+        alert('Birthday Collection Tracker v1.0\n\nManage and track birthday fund collections easily.');
+        // Or close the sidebar
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+
+    // Export functionality REMOVED
+
+    // ============= INITIALIZATION =============
+    document.addEventListener('DOMContentLoaded', () => {
+      updateUI();
+      updateReminderStatus();
+
+      if (localStorage.getItem(REMINDER_ENABLED_KEY) === 'true') {
+        requestNotificationPermission();
+        scheduleReminderCheck();
+      }
+
+      window.addEventListener('click', (e) => {
+        if (e.target === whatsappModal) {
+          whatsappModal.style.display = 'none';
+        }
+      });
+    });
+
+    // ============= ACCESSIBILITY =============
+    whatsappModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        whatsappModal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
+
