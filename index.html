@@ -6,17 +6,20 @@
   <title>Birthday Collection Tracker</title>
   <style>
     :root {
-      --primary: #4CAF50;
-      --primary-dark: #388E3C;
-      --secondary: #FF9800;
-      --danger: #F44336;
-      --light: #f5f5f5;
-      --dark: #333;
-      --border: #ddd;
-      --text: #333;
-      --text-light: #666;
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #ff9e00;
+      --danger: #e63946;
+      --success: #2a9d8f;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --border: #e9ecef;
+      --text: #212529;
+      --text-light: #6c757d;
       --white: #ffffff;
-      --shadow: 0 2px 10px rgba(0,0,0,0.1);
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --card-radius: 12px;
+      --transition: all 0.3s ease;
     }
 
     * {
@@ -26,12 +29,13 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       line-height: 1.6;
       color: var(--text);
-      background-color: var(--light);
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
       padding: 16px;
-      padding-top: 60px; /* Space for fixed header */
+      padding-top: 72px;
+      min-height: 100vh;
     }
 
     header {
@@ -39,79 +43,119 @@
       top: 0;
       left: 0;
       right: 0;
-      background-color: var(--white);
+      background: var(--white);
       box-shadow: var(--shadow);
-      padding: 12px 16px;
+      padding: 14px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       z-index: 100;
+      border-radius: 0 0 var(--card-radius) var(--card-radius);
     }
 
     .logo {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: var(--primary);
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .hamburger {
       background: none;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       cursor: pointer;
       color: var(--dark);
       padding: 4px;
+      transition: var(--transition);
+    }
+
+    .hamburger:hover {
+      color: var(--primary);
     }
 
     .container {
-      max-width: 800px;
+      max-width: 850px;
       margin: 0 auto;
       width: 100%;
     }
 
     .section {
       background-color: var(--white);
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
+      border-radius: var(--card-radius);
+      padding: 20px;
+      margin-bottom: 20px;
       box-shadow: var(--shadow);
+      transition: var(--transition);
     }
 
-    h2 {
-      font-size: 1.3rem;
-      margin-bottom: 12px;
-      color: var(--primary-dark);
+    .section:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
+
+    h2, h3, h4 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3 { font-size: 1.25rem; }
+    h4 { font-size: 1.15rem; margin-bottom: 12px; }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     label {
       display: block;
-      margin-bottom: 4px;
-      font-weight: bold;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
     }
 
-    input[type="number"], input[type="text"] {
+    input[type="number"], 
+    input[type="text"],
+    textarea {
       width: 100%;
-      padding: 8px;
+      padding: 12px 14px;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    input:focus, 
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
     }
 
     .checkbox-group {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-group input {
+      width: auto;
+      height: 18px;
+      accent-color: var(--primary);
     }
 
     .expense-item {
       display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
+      gap: 12px;
+      margin-bottom: 12px;
       align-items: center;
     }
 
@@ -123,21 +167,34 @@
       background-color: var(--danger);
       color: white;
       border: none;
-      border-radius: 4px;
-      padding: 4px 8px;
+      border-radius: 6px;
+      padding: 8px 12px;
       cursor: pointer;
       font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .remove-expense-btn:hover {
+      background-color: #c1121f;
     }
 
     .add-expense-btn {
       background-color: var(--primary);
       color: white;
       border: none;
-      border-radius: 4px;
-      padding: 8px 12px;
+      border-radius: 6px;
+      padding: 10px 16px;
       cursor: pointer;
-      font-size: 0.9rem;
-      margin-top: 8px;
+      font-size: 0.95rem;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .add-expense-btn:hover {
+      background-color: var(--primary-dark);
     }
 
     .colleague-list {
@@ -148,7 +205,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 0;
+      padding: 14px 0;
       border-bottom: 1px solid var(--border);
     }
 
@@ -157,27 +214,29 @@
     }
 
     .colleague-name {
-      font-size: 1rem;
+      font-size: 1.05rem;
       flex-grow: 1;
+      font-weight: 500;
     }
 
     .add-btn, .remove-btn {
       background-color: var(--primary);
       color: white;
       border: none;
-      border-radius: 4px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 0.95rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 40px;
-      height: 40px;
+      min-width: 42px;
+      height: 42px;
+      transition: var(--transition);
     }
 
     .add-btn[aria-disabled="true"] {
-      background-color: #ccc;
+      background-color: #adb5bd;
       cursor: not-allowed;
     }
 
@@ -190,50 +249,59 @@
     }
 
     .remove-btn:hover {
-      background-color: #d32f2f;
+      background-color: #c1121f;
     }
 
-    .submit-btn {
-      background-color: var(--secondary);
-      color: var(--dark);
+    .submit-btn, 
+    .collection-btn, 
+    .reminder-20th-btn,
+    .manage-colleagues-btn {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       padding: 14px 20px;
-      font-size: 1rem;
-      font-weight: bold;
+      font-size: 1.05rem;
+      font-weight: 600;
       cursor: pointer;
       width: 100%;
-      margin-top: 8px;
+      margin-top: 12px;
+      transition: var(--transition);
+      box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
     }
 
-    .submit-btn:hover {
-      background-color: #F57C00;
+    .submit-btn:hover, 
+    .collection-btn:hover, 
+    .reminder-20th-btn:hover,
+    .manage-colleagues-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
     }
 
-    .reminder-section {
+    .reminder-section,
+    .custom-message-section {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
     .reminder-toggle {
       display: flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    .reminder-toggle input {
-      width: auto;
+      gap: 12px;
     }
 
     .reminder-status {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--text-light);
+      padding: 8px 12px;
+      background: rgba(67, 97, 238, 0.08);
+      border-radius: 6px;
     }
 
     .notification-permission {
       margin-top: 8px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text-light);
     }
 
@@ -244,56 +312,71 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0,0,0,0.6);
       z-index: 1000;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
 
     .modal-content {
       background-color: var(--white);
-      border-radius: 8px;
+      border-radius: 16px;
       width: 90%;
-      max-width: 500px;
-      padding: 20px;
+      max-width: 550px;
+      padding: 28px;
       position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
     .close-modal {
       position: absolute;
-      top: 12px;
-      right: 16px;
+      top: 18px;
+      right: 22px;
       background: none;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       cursor: pointer;
       color: var(--text-light);
+      transition: var(--transition);
+    }
+
+    .close-modal:hover {
+      color: var(--danger);
+    }
+
+    .modal h3 {
+      margin-bottom: 18px;
+      color: var(--primary-dark);
+      font-size: 1.4rem;
     }
 
     .modal textarea {
-      width: 100%;
-      min-height: 150px;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-family: inherit;
-      margin-bottom: 12px;
-      resize: vertical;
+      min-height: 180px;
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+      line-height: 1.5;
     }
 
     .modal-buttons {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       flex-wrap: wrap;
+    }
+
+    .copy-btn, .whatsapp-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: var(--transition);
     }
 
     .copy-btn {
       background-color: var(--primary);
       color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 16px;
-      cursor: pointer;
     }
 
     .copy-btn:hover {
@@ -303,10 +386,6 @@
     .whatsapp-btn {
       background-color: #25D366;
       color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 16px;
-      cursor: pointer;
     }
 
     .whatsapp-btn:hover {
@@ -315,28 +394,30 @@
 
     .toast {
       position: fixed;
-      bottom: 20px;
+      bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
       background-color: var(--dark);
       color: white;
-      padding: 12px 20px;
-      border-radius: 4px;
+      padding: 14px 24px;
+      border-radius: 8px;
       z-index: 1001;
       display: none;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     .sidebar {
       position: fixed;
       top: 0;
-      left: -250px;
-      width: 250px;
+      left: -280px;
+      width: 280px;
       height: 100%;
       background-color: var(--white);
-      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      box-shadow: 2px 0 15px rgba(0,0,0,0.15);
       z-index: 999;
-      transition: left 0.3s ease;
-      padding: 20px;
+      transition: left 0.35s ease;
+      padding: 28px 20px;
       overflow-y: auto;
     }
 
@@ -359,28 +440,103 @@
       display: block;
     }
 
-    /* New Button Styles */
-    .collection-btn, .reminder-20th-btn {
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 1rem;
-      margin-top: 8px;
-      width: 100%;
-      margin-bottom: 8px; /* Space between buttons */
+    /* Colleague Management Styles */
+    .colleague-input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
-    .collection-btn:hover, .reminder-20th-btn:hover {
-      background-color: #0b7dda;
+    .colleague-input-group input {
+      flex: 1;
+    }
+
+    .add-colleague-btn {
+      background-color: var(--success);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .add-colleague-btn:hover {
+      background-color: #21867a;
+    }
+
+    .current-colleagues {
+      margin-top: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .current-colleagues::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .current-colleagues::-webkit-scrollbar-track {
+      background: var(--light);
+      border-radius: 3px;
+    }
+
+    .current-colleagues::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 3px;
+    }
+
+    .colleague-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary-dark);
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin: 4px;
+      font-size: 0.95rem;
+    }
+
+    .remove-colleague-btn {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    /* Mobile-only sections in sidebar */
+    .mobile-section {
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    /* Hide on mobile */
+    @media (max-width: 599px) {
+      #manageColleaguesSection,
+      .custom-message-section,
+      .reminder-section,
+      .collection-btn,
+      .reminder-20th-btn {
+        display: none !important;
+      }
     }
 
     @media (min-width: 600px) {
       body {
-        padding: 24px;
-        padding-top: 70px;
+        padding: 28px;
+        padding-top: 80px;
       }
 
       .hamburger {
@@ -407,8 +563,8 @@
         <input type="number" id="collectionAmount" min="0" step="0.01" value="100">
       </div>
       <div class="form-group">
-          <label for="previousMonthBalance">Previous Month Remaining Balance (₹):</label>
-          <input type="number" id="previousMonthBalance" min="0" step="0.01" value="0">
+        <label for="previousMonthBalance">Previous Month Remaining Balance (₹):</label>
+        <input type="number" id="previousMonthBalance" min="0" step="0.01" value="0">
       </div>
       <div class="form-group">
         <div class="checkbox-group">
@@ -420,8 +576,22 @@
           <div id="expensesList">
             <!-- Expense items will be added here dynamically -->
           </div>
-          <button type="button" class="add-expense-btn" id="addExpenseBtn">+ Add Expense Item</button>
+          <button type="button" class="add-expense-btn" id="addExpenseBtn">
+            <span>+</span> Add Expense Item
+          </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Manage Colleagues Section (hidden on mobile) -->
+    <div id="manageColleaguesSection" class="section">
+      <h2>Manage Colleagues</h2>
+      <div class="colleague-input-group">
+        <input type="text" id="newColleagueInput" placeholder="Enter colleague name">
+        <button class="add-colleague-btn" id="addColleagueBtn">Add</button>
+      </div>
+      <div class="current-colleagues" id="currentColleaguesList">
+        <!-- Current colleagues will be displayed here -->
       </div>
     </div>
 
@@ -439,6 +609,17 @@
       </ul>
     </div>
 
+    <!-- Custom Message Section (hidden on mobile) -->
+    <div class="section custom-message-section">
+      <h2>Custom Collection Message</h2>
+      <div class="form-group">
+        <label for="customMessage">Your Personalized Message:</label>
+        <textarea id="customMessage" placeholder="Enter your custom collection message here..."></textarea>
+      </div>
+      <button class="submit-btn" id="saveCustomMessageBtn">Save Custom Message</button>
+    </div>
+
+    <!-- Reminder Settings (hidden on mobile) -->
     <div class="section">
       <h2>Reminder Settings</h2>
       <div class="reminder-section">
@@ -453,14 +634,56 @@
       </div>
     </div>
 
-    <!-- New Buttons -->
+    <!-- Action Buttons (hidden on mobile) -->
     <button class="collection-btn" id="collectionBtn">Collection Message</button>
     <button class="reminder-20th-btn" id="reminder20thBtn">Every 20th Reminder</button>
-
-    <button class="submit-btn" id="submitBtn">Generate Financial WhatsApp Message</button> <!-- Renamed original button -->
-
+    <button class="submit-btn" id="submitBtn">Generate Financial WhatsApp Message</button>
   </div>
 
+  <!-- Sidebar for Mobile -->
+  <div class="sidebar" id="sidebar">
+    <h3>Menu</h3>
+    
+    <!-- Manage Colleagues -->
+    <div class="mobile-section">
+      <h4>Manage Colleagues</h4>
+      <div class="colleague-input-group">
+        <input type="text" id="mobileNewColleagueInput" placeholder="Enter name">
+        <button class="add-colleague-btn" id="mobileAddColleagueBtn">Add</button>
+      </div>
+      <div class="current-colleagues" id="mobileCurrentColleaguesList"></div>
+    </div>
+
+    <!-- Custom Message -->
+    <div class="mobile-section">
+      <h4>Custom Collection Message</h4>
+      <textarea id="mobileCustomMessage" placeholder="Your message..."></textarea>
+      <button class="submit-btn" id="mobileSaveCustomMessageBtn" style="width:100%; margin-top:8px;">Save</button>
+    </div>
+
+    <!-- Reminder Settings -->
+    <div class="mobile-section">
+      <h4>Reminder Settings</h4>
+      <div class="reminder-toggle">
+        <input type="checkbox" id="mobileReminderToggle">
+        <label for="mobileReminderToggle">Enable Monthly Reminder (20th)</label>
+      </div>
+      <div class="reminder-status" id="mobileReminderStatus">Loading...</div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mobile-section">
+      <button class="collection-btn" id="mobileCollectionBtn" style="margin-bottom:10px;">Collection Message</button>
+      <button class="reminder-20th-btn" id="mobileReminder20thBtn" style="margin-bottom:10px;">Every 20th Reminder</button>
+      <button class="submit-btn" id="mobileSubmitBtn">Financial WhatsApp Message</button>
+    </div>
+
+    <a href="#" id="aboutLink" style="display: block; margin-top: 20px; color: var(--primary); text-decoration: none;">About</a>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Modal -->
   <div class="modal" id="whatsappModal">
     <div class="modal-content">
       <button class="close-modal" id="closeModalBtn">&times;</button>
@@ -475,49 +698,28 @@
 
   <div class="toast" id="toast">Item updated</div>
 
-  <div class="sidebar" id="sidebar">
-    <h3>Menu</h3>
-    <p>Manage your birthday collection list.</p>
-    <!-- Added About link -->
-    <a href="#" id="aboutLink" style="display: block; margin-top: 10px; color: var(--primary); text-decoration: none;">About</a>
-  </div>
-
-  <div class="overlay" id="overlay"></div>
-
   <script>
     // ============= CONFIGURATION =============
-    // Update this list to manage your colleagues
-    const colleagues = [
-      "Shashank",
-      "Vivid",
-      "Laxmi",
-      "Surjan",
-      "Rahila",
-      "Pritom",
-      "Ahmed",
-      "Padmakar",
-      "Nandan",
-      "Nikhil",
-      "Venkatesu",
-      "Depthi",
-      "Shwetha"
-
+    let colleagues = JSON.parse(localStorage.getItem("birthday_colleagues_v1")) || [
+      "Shashank", "Vivid", "Laxmi", "Surjan", "Rahila", "Pritom", "Ahmed",
+      "Padmakar", "Nandan", "Nikhil", "Venkatesu", "Depthi", "Shwetha"
     ];
 
-    // Storage keys
-    const PAID_LIST_KEY = "birthday_paid_list_v1"; // Now uses localStorage
+    const PAID_LIST_KEY = "birthday_paid_list_v1";
     const REMINDER_ENABLED_KEY = "birthday_reminder_enabled_v1";
     const COLLECTION_AMOUNT_KEY = "collection_amount_v1";
     const PREVIOUS_BALANCE_KEY = "previous_balance_v1";
     const EXPENSES_ENABLED_KEY = "expenses_enabled_v1";
     const EXPENSES_LIST_KEY = "expenses_list_v1";
+    const COLLEAGUES_KEY = "birthday_colleagues_v1";
+    const CUSTOM_MESSAGE_KEY = "custom_collection_message_v1";
 
     // ============= DOM ELEMENTS =============
     const colleagueListEl = document.getElementById('colleagueList');
     const paidListEl = document.getElementById('paidList');
     const submitBtn = document.getElementById('submitBtn');
-    const collectionBtn = document.getElementById('collectionBtn'); // New Element
-    const reminder20thBtn = document.getElementById('reminder20thBtn'); // New Element
+    const collectionBtn = document.getElementById('collectionBtn');
+    const reminder20thBtn = document.getElementById('reminder20thBtn');
     const whatsappModal = document.getElementById('whatsappModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
     const whatsappMessageEl = document.getElementById('whatsappMessage');
@@ -536,15 +738,32 @@
     const expensesSection = document.getElementById('expensesSection');
     const expensesListEl = document.getElementById('expensesList');
     const addExpenseBtn = document.getElementById('addExpenseBtn');
-    const aboutLink = document.getElementById('aboutLink'); // New Element
+    const aboutLink = document.getElementById('aboutLink');
+    const newColleagueInput = document.getElementById('newColleagueInput');
+    const addColleagueBtn = document.getElementById('addColleagueBtn');
+    const currentColleaguesList = document.getElementById('currentColleaguesList');
+    const customMessageTextarea = document.getElementById('customMessage');
+    const saveCustomMessageBtn = document.getElementById('saveCustomMessageBtn');
+
+    // Mobile elements
+    const mobileNewColleagueInput = document.getElementById('mobileNewColleagueInput');
+    const mobileAddColleagueBtn = document.getElementById('mobileAddColleagueBtn');
+    const mobileCurrentColleaguesList = document.getElementById('mobileCurrentColleaguesList');
+    const mobileCustomMessage = document.getElementById('mobileCustomMessage');
+    const mobileSaveCustomMessageBtn = document.getElementById('mobileSaveCustomMessageBtn');
+    const mobileReminderToggle = document.getElementById('mobileReminderToggle');
+    const mobileReminderStatus = document.getElementById('mobileReminderStatus');
+    const mobileCollectionBtn = document.getElementById('mobileCollectionBtn');
+    const mobileReminder20thBtn = document.getElementById('mobileReminder20thBtn');
+    const mobileSubmitBtn = document.getElementById('mobileSubmitBtn');
 
     // ============= STATE MANAGEMENT =============
-    // Changed: Load from localStorage instead of sessionStorage
     let paidList = JSON.parse(localStorage.getItem(PAID_LIST_KEY)) || [];
     let collectionAmount = parseFloat(localStorage.getItem(COLLECTION_AMOUNT_KEY)) || 100.00;
     let previousMonthBalance = parseFloat(localStorage.getItem(PREVIOUS_BALANCE_KEY)) || 0.00;
     let expensesEnabled = localStorage.getItem(EXPENSES_ENABLED_KEY) === 'true';
     let expensesList = JSON.parse(localStorage.getItem(EXPENSES_LIST_KEY)) || [];
+    let customMessage = localStorage.getItem(CUSTOM_MESSAGE_KEY) || '';
 
     // ============= HELPER FUNCTIONS =============
     function showToast(message) {
@@ -555,37 +774,48 @@
       }, 3000);
     }
 
-    // Changed: Save to localStorage instead of sessionStorage
-    function savePaidList() {
+    function saveToStorage() {
+      localStorage.setItem(COLLEAGUES_KEY, JSON.stringify(colleagues));
       localStorage.setItem(PAID_LIST_KEY, JSON.stringify(paidList));
-    }
-
-    function saveCollectionAmount() {
-        localStorage.setItem(COLLECTION_AMOUNT_KEY, collectionAmountInput.value);
-    }
-
-    function savePreviousMonthBalance() {
-        localStorage.setItem(PREVIOUS_BALANCE_KEY, previousMonthBalanceInput.value);
-    }
-
-    function saveExpensesEnabled() {
-        localStorage.setItem(EXPENSES_ENABLED_KEY, addExpensesToggle.checked);
-    }
-
-    function saveExpensesList() {
-        localStorage.setItem(EXPENSES_LIST_KEY, JSON.stringify(expensesList));
+      localStorage.setItem(COLLECTION_AMOUNT_KEY, collectionAmountInput.value);
+      localStorage.setItem(PREVIOUS_BALANCE_KEY, previousMonthBalanceInput.value);
+      localStorage.setItem(EXPENSES_ENABLED_KEY, addExpensesToggle.checked);
+      localStorage.setItem(EXPENSES_LIST_KEY, JSON.stringify(expensesList));
+      localStorage.setItem(CUSTOM_MESSAGE_KEY, customMessageTextarea.value);
     }
 
     function updateUI() {
       renderColleagueList();
       renderPaidList();
+      renderCurrentColleagues();
       collectionAmountInput.value = collectionAmount;
       previousMonthBalanceInput.value = previousMonthBalance;
       addExpensesToggle.checked = expensesEnabled;
       expensesSection.style.display = expensesEnabled ? 'block' : 'none';
-      if (expensesEnabled) {
-          renderExpensesList();
-      }
+      if (expensesEnabled) renderExpensesList();
+      customMessageTextarea.value = customMessage;
+    }
+
+    function renderCurrentColleagues() {
+      currentColleaguesList.innerHTML = '';
+      colleagues.forEach((name, index) => {
+        const tag = document.createElement('div');
+        tag.className = 'colleague-tag';
+        tag.innerHTML = `${name} <button class="remove-colleague-btn" data-index="${index}">×</button>`;
+        currentColleaguesList.appendChild(tag);
+      });
+
+      document.querySelectorAll('.remove-colleague-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.currentTarget.dataset.index);
+          const removedName = colleagues[index];
+          colleagues.splice(index, 1);
+          paidList = paidList.filter(name => name !== removedName);
+          saveToStorage();
+          updateUI();
+          showToast(`Removed ${removedName}`);
+        });
+      });
     }
 
     function renderColleagueList() {
@@ -595,7 +825,6 @@
         const li = document.createElement('li');
         li.className = 'colleague-item';
         li.setAttribute('role', 'listitem');
-
         li.innerHTML = `
           <span class="colleague-name">${name}</span>
           <button class="add-btn" 
@@ -604,7 +833,6 @@
                   ${isPaid ? 'disabled' : ''}
                   aria-label="${isPaid ? 'Already paid' : 'Add ' + name}">${isPaid ? '✓' : '+'}</button>
         `;
-
         colleagueListEl.appendChild(li);
       });
 
@@ -613,7 +841,7 @@
           const name = e.currentTarget.dataset.name;
           if (!paidList.includes(name)) {
             paidList.push(name);
-            savePaidList(); // Save to localStorage
+            saveToStorage();
             updateUI();
             showToast(`Added ${name} to paid list`);
           }
@@ -632,14 +860,12 @@
         const li = document.createElement('li');
         li.className = 'colleague-item';
         li.setAttribute('role', 'listitem');
-
         li.innerHTML = `
           <span class="colleague-name">${name}</span>
           <button class="remove-btn" 
                   data-name="${name}" 
                   aria-label="Remove ${name}">🗑️</button>
         `;
-
         paidListEl.appendChild(li);
       });
 
@@ -647,7 +873,7 @@
         btn.addEventListener('click', (e) => {
           const name = e.currentTarget.dataset.name;
           paidList = paidList.filter(n => n !== name);
-          savePaidList(); // Save to localStorage
+          saveToStorage();
           updateUI();
           showToast(`Removed ${name} from paid list`);
         });
@@ -655,81 +881,75 @@
     }
 
     function renderExpensesList() {
-        expensesListEl.innerHTML = '';
-        expensesList.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.className = 'expense-item';
-            div.innerHTML = `
-                <input type="text" class="expense-name" value="${item.name}" placeholder="Item Name" data-index="${index}">
-                <input type="number" class="expense-price" value="${item.price}" min="0" step="0.01" placeholder="Price" data-index="${index}">
-                <button type="button" class="remove-expense-btn" data-index="${index}">X</button>
-            `;
-            expensesListEl.appendChild(div);
-        });
+      expensesListEl.innerHTML = '';
+      expensesList.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'expense-item';
+        div.innerHTML = `
+          <input type="text" class="expense-name" value="${item.name}" placeholder="Item Name" data-index="${index}">
+          <input type="number" class="expense-price" value="${item.price}" min="0" step="0.01" placeholder="Price" data-index="${index}">
+          <button type="button" class="remove-expense-btn" data-index="${index}">X</button>
+        `;
+        expensesListEl.appendChild(div);
+      });
 
-        document.querySelectorAll('.expense-name, .expense-price').forEach(input => {
-            input.addEventListener('input', (e) => {
-                const index = parseInt(e.target.dataset.index);
-                if (e.target.classList.contains('expense-name')) {
-                    expensesList[index].name = e.target.value;
-                } else if (e.target.classList.contains('expense-price')) {
-                    expensesList[index].price = parseFloat(e.target.value) || 0;
-                }
-                saveExpensesList();
-            });
+      document.querySelectorAll('.expense-name, .expense-price').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          if (e.target.classList.contains('expense-name')) {
+            expensesList[index].name = e.target.value;
+          } else if (e.target.classList.contains('expense-price')) {
+            expensesList[index].price = parseFloat(e.target.value) || 0;
+          }
+          saveToStorage();
         });
+      });
 
-        document.querySelectorAll('.remove-expense-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.dataset.index);
-                expensesList.splice(index, 1);
-                saveExpensesList();
-                updateUI();
-                showToast('Expense item removed');
-            });
+      document.querySelectorAll('.remove-expense-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          expensesList.splice(index, 1);
+          saveToStorage();
+          updateUI();
+          showToast('Expense item removed');
         });
+      });
     }
-
 
     // ============= CALCULATION FUNCTIONS =============
     function calculateTotalCollection() {
-        const amountPerPerson = parseFloat(collectionAmountInput.value) || 0;
-        const previousBalance = parseFloat(previousMonthBalanceInput.value) || 0;
-        return (paidList.length * amountPerPerson) + previousBalance;
+      const amountPerPerson = parseFloat(collectionAmountInput.value) || 0;
+      const previousBalance = parseFloat(previousMonthBalanceInput.value) || 0;
+      return (paidList.length * amountPerPerson) + previousBalance;
     }
 
     function calculateTotalExpenses() {
-        return expensesList.reduce((total, item) => total + (item.price || 0), 0);
+      return expensesList.reduce((total, item) => total + (item.price || 0), 0);
     }
 
     function calculateAvailableFunds() {
-        return calculateTotalCollection() - calculateTotalExpenses();
+      return calculateTotalCollection() - calculateTotalExpenses();
     }
 
-    // ============= MODIFIED FUNCTION FOR EMOJIS AND FINANCES (REPLACED EMOJIS) =============
+    // ============= MESSAGE GENERATION =============
     function generateWhatsAppMessage() {
-      const allNames = new Set(colleagues);
       const paidNames = colleagues.filter(name => paidList.includes(name));
       const unpaidNames = colleagues.filter(name => !paidList.includes(name));
 
       let message = "Birthday Collection Status:\n\n";
 
       if (paidNames.length > 0) {
-        message += "*PAID* ✅\n\n"; // Changed emoji representation
-        paidNames.forEach(name => {
-          message += `- ${name}\n`;
-        });
+        message += "*PAID* ✅\n\n";
+        paidNames.forEach(name => message += `- ${name}\n`);
         message += "\n";
       }
 
       if (unpaidNames.length > 0) {
-        message += "*NOT* *PAID*❌\n\n"; // Changed emoji representation
-        unpaidNames.forEach(name => {
-          message += `- ${name}\n`;
-        });
+        message += "*NOT* *PAID*❌\n\n";
+        unpaidNames.forEach(name => message += `- ${name}\n`);
         message += "\n";
       } else {
-        message += "All colleagues have paid! (🎉)\n\n"; // Changed emoji representation
+        message += "All colleagues have paid! (🎉)\n\n";
       }
 
       const totalCollection = calculateTotalCollection();
@@ -739,57 +959,54 @@
 
       message += "*FINANCIAL SUMMARY*\n";
       if (previousBalance > 0) {
-          message += `Previous Month Balance: ₹${previousBalance.toFixed(2)}\n`;
+        message += `Previous Month Balance: ₹${previousBalance.toFixed(2)}\n`;
       }
       message += `Total Collected (This Month + Previous): ₹${totalCollection.toFixed(2)} (${paidList.length} x ₹${(parseFloat(collectionAmountInput.value) || 0).toFixed(2)})\n`;
       message += `Total Expenses: ₹${totalExpenses.toFixed(2)}\n`;
       message += `Available Funds: ₹${availableFunds.toFixed(2)}\n`;
 
       if (expensesList.length > 0) {
-          message += "\n*Expense Details:*\n";
-          expensesList.forEach(item => {
-              message += `- ${item.name}: ₹${item.price.toFixed(2)}\n`;
-          });
+        message += "\n*Expense Details:*\n";
+        expensesList.forEach(item => {
+          message += `- ${item.name}: ₹${item.price.toFixed(2)}\n`;
+        });
       }
 
       return message;
     }
 
-    // ============= NEW FUNCTION FOR COLLECTION MESSAGE (REPLACED EMOJIS) =============
     function generateCollectionMessage() {
-        const allNames = new Set(colleagues);
-        const paidNames = colleagues.filter(name => paidList.includes(name));
-        const unpaidNames = colleagues.filter(name => !paidList.includes(name));
+      if (customMessageTextarea.value.trim()) {
+        return customMessageTextarea.value;
+      }
+      
+      const paidNames = colleagues.filter(name => paidList.includes(name));
+      const unpaidNames = colleagues.filter(name => !paidList.includes(name));
 
-        let message = "*PAYMENT* *REMINDER!!.*\n\n_Please_ _Pay_ _if_ _you_ _are_ _yet_ _to_ _pay_. _Ignore_ _if_ _paid_ \n\nGpay/Phonepe📱\n\n8837229278 \n\n";
+      let message = "*PAYMENT* *REMINDER!!.*\n\n_Please_ _Pay_ _if_ _you_ _are_ _yet_ _to_ _pay_. _Ignore_ _if_ _paid_ \n\nGpay/Phonepe📱\n\n8837229278 \n\n";
 
-        if (paidNames.length > 0) {
-          message += "*PAID*✅\n"; // Changed emoji representation
-          paidNames.forEach(name => {
-            message += `- ${name}\n`;
-          });
-          message += "\n";
-        }
+      if (paidNames.length > 0) {
+        message += "*PAID* ✅\n";
+        paidNames.forEach(name => message += `- ${name}\n`);
+        message += "\n";
+      }
 
-        if (unpaidNames.length > 0) {
-          message += "*NOT* *PAID*❌\n"; // Changed emoji representation
-          unpaidNames.forEach(name => {
-            message += `- ${name}\n`;
-          });
-        } else {
-          message += "All colleagues have paid! (🎉)"; // Changed emoji representation
-        }
+      if (unpaidNames.length > 0) {
+        message += "*NOT* *PAID* ❌\n";
+        unpaidNames.forEach(name => message += `- ${name}\n`);
+      } else {
+        message += "All colleagues have paid! (🎉)";
+      }
 
-        return message;
+      return message;
     }
 
-    // ============= NEW FUNCTION FOR 20TH REMINDER MESSAGE =============
     function generate20thReminderMessage() {
-        const collectionAmount = parseFloat(collectionAmountInput.value) || 100; // Use current amount or default to 100
-        return `Hi Team👥 ,Payday Reminder💵could you pop *Rs* *${collectionAmount}* into the birthday fund? Small price for big smiles😊.\n\nGpay/Phonepe📱\n\n8837229278 \n\nThanks!\n`;
+      const collectionAmount = parseFloat(collectionAmountInput.value) || 100;
+      return `Hi Team👥 ,Payday Reminder💵could you pop *Rs* *${collectionAmount}* into the birthday fund? Small price for big smiles😊.\n\nGpay/Phonepe📱\n\n8837229278 \n\nThanks!\n`;
     }
 
-    // ============= NOTIFICATION REMINDER LOGIC =============
+    // ============= NOTIFICATION LOGIC =============
     function updateReminderStatus() {
       const isEnabled = localStorage.getItem(REMINDER_ENABLED_KEY) === 'true';
       reminderToggle.checked = isEnabled;
@@ -828,23 +1045,52 @@
       checkAndShowReminder();
     }
 
+    // ============= MOBILE SIDEBAR SYNC =============
+    function updateMobileUI() {
+      // Sync colleagues
+      mobileCurrentColleaguesList.innerHTML = '';
+      colleagues.forEach((name, index) => {
+        const tag = document.createElement('div');
+        tag.className = 'colleague-tag';
+        tag.innerHTML = `${name} <button class="remove-colleague-btn" data-index="${index}">×</button>`;
+        mobileCurrentColleaguesList.appendChild(tag);
+      });
+
+      mobileCurrentColleaguesList.querySelectorAll('.remove-colleague-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.currentTarget.dataset.index);
+          const removed = colleagues[index];
+          colleagues.splice(index, 1);
+          paidList = paidList.filter(n => n !== removed);
+          saveToStorage();
+          updateUI();
+          updateMobileUI();
+          showToast(`Removed ${removed}`);
+        });
+      });
+
+      // Sync custom message
+      mobileCustomMessage.value = customMessage;
+
+      // Sync reminder
+      mobileReminderToggle.checked = localStorage.getItem(REMINDER_ENABLED_KEY) === 'true';
+      mobileReminderStatus.textContent = mobileReminderToggle.checked ? 'Reminder enabled' : 'Reminder disabled';
+    }
+
     // ============= EVENT LISTENERS =============
-    submitBtn.addEventListener('click', () => { // Original financial message
-      const message = generateWhatsAppMessage();
-      whatsappMessageEl.value = message;
+    submitBtn.addEventListener('click', () => {
+      whatsappMessageEl.value = generateWhatsAppMessage();
       whatsappModal.style.display = 'flex';
     });
 
-    collectionBtn.addEventListener('click', () => { // New collection message
-        const message = generateCollectionMessage();
-        whatsappMessageEl.value = message;
-        whatsappModal.style.display = 'flex';
+    collectionBtn.addEventListener('click', () => {
+      whatsappMessageEl.value = generateCollectionMessage();
+      whatsappModal.style.display = 'flex';
     });
 
-    reminder20thBtn.addEventListener('click', () => { // New 20th reminder message
-        const message = generate20thReminderMessage();
-        whatsappMessageEl.value = message;
-        whatsappModal.style.display = 'flex';
+    reminder20thBtn.addEventListener('click', () => {
+      whatsappMessageEl.value = generate20thReminderMessage();
+      whatsappModal.style.display = 'flex';
     });
 
     closeModalBtn.addEventListener('click', () => {
@@ -852,9 +1098,9 @@
     });
 
     openWhatsAppBtn.addEventListener('click', () => {
-      const message = whatsappMessageEl.value;
-      const encodedMessage = encodeURIComponent(message);
-      window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+      const msg = whatsappMessageEl.value;
+      const encoded = encodeURIComponent(msg);
+      window.open(`https://wa.me/?text=${encoded}`, '_blank');
       showToast('WhatsApp opened with message');
     });
 
@@ -865,48 +1111,114 @@
     });
 
     reminderToggle.addEventListener('change', (e) => {
-      const isEnabled = e.target.checked;
-      localStorage.setItem(REMINDER_ENABLED_KEY, isEnabled);
+      localStorage.setItem(REMINDER_ENABLED_KEY, e.target.checked);
       updateReminderStatus();
-
-      if (isEnabled && Notification.permission !== 'granted') {
+      if (e.target.checked && Notification.permission !== 'granted') {
         requestNotificationPermission();
       }
     });
 
-    collectionAmountInput.addEventListener('input', (e) => {
-        collectionAmount = parseFloat(e.target.value) || 0;
-        saveCollectionAmount();
+    collectionAmountInput.addEventListener('input', () => {
+      collectionAmount = parseFloat(collectionAmountInput.value) || 0;
+      saveToStorage();
     });
 
-    previousMonthBalanceInput.addEventListener('input', (e) => {
-        previousMonthBalance = parseFloat(e.target.value) || 0;
-        savePreviousMonthBalance();
+    previousMonthBalanceInput.addEventListener('input', () => {
+      previousMonthBalance = parseFloat(previousMonthBalanceInput.value) || 0;
+      saveToStorage();
     });
 
     addExpensesToggle.addEventListener('change', (e) => {
-        expensesEnabled = e.target.checked;
-        saveExpensesEnabled();
-        expensesSection.style.display = expensesEnabled ? 'block' : 'none';
-        if (expensesEnabled) {
-            if (expensesList.length === 0) {
-                expensesList.push({ name: '', price: 0 });
-                saveExpensesList();
-            }
-            renderExpensesList();
-        }
+      expensesEnabled = e.target.checked;
+      saveToStorage();
+      expensesSection.style.display = expensesEnabled ? 'block' : 'none';
+      if (expensesEnabled && expensesList.length === 0) {
+        expensesList.push({ name: '', price: 0 });
+        saveToStorage();
+        renderExpensesList();
+      }
     });
 
     addExpenseBtn.addEventListener('click', () => {
-        expensesList.push({ name: '', price: 0 });
-        saveExpensesList();
-        renderExpensesList();
+      expensesList.push({ name: '', price: 0 });
+      saveToStorage();
+      renderExpensesList();
+    });
+
+    // Main page colleague management
+    addColleagueBtn.addEventListener('click', () => {
+      const name = newColleagueInput.value.trim();
+      if (name && !colleagues.includes(name)) {
+        colleagues.push(name);
+        newColleagueInput.value = '';
+        saveToStorage();
+        updateUI();
+        showToast(`Added ${name}`);
+      } else if (colleagues.includes(name)) {
+        showToast('Colleague already exists!');
+      }
+    });
+
+    newColleagueInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addColleagueBtn.click();
+    });
+
+    saveCustomMessageBtn.addEventListener('click', () => {
+      customMessage = customMessageTextarea.value;
+      saveToStorage();
+      showToast('Custom message saved!');
+    });
+
+    // Mobile sidebar actions
+    mobileAddColleagueBtn.addEventListener('click', () => {
+      const name = mobileNewColleagueInput.value.trim();
+      if (name && !colleagues.includes(name)) {
+        colleagues.push(name);
+        mobileNewColleagueInput.value = '';
+        saveToStorage();
+        updateUI();
+        updateMobileUI();
+        showToast(`Added ${name}`);
+      }
+    });
+
+    mobileSaveCustomMessageBtn.addEventListener('click', () => {
+      customMessage = mobileCustomMessage.value;
+      saveToStorage();
+      showToast('Custom message saved!');
+    });
+
+    mobileReminderToggle.addEventListener('change', (e) => {
+      localStorage.setItem(REMINDER_ENABLED_KEY, e.target.checked);
+      updateReminderStatus();
+      updateMobileUI();
+      if (e.target.checked && Notification.permission !== 'granted') {
+        requestNotificationPermission();
+      }
+    });
+
+    mobileCollectionBtn.addEventListener('click', () => {
+      whatsappMessageEl.value = generateCollectionMessage();
+      whatsappModal.style.display = 'flex';
+    });
+
+    mobileReminder20thBtn.addEventListener('click', () => {
+      whatsappMessageEl.value = generate20thReminderMessage();
+      whatsappModal.style.display = 'flex';
+    });
+
+    mobileSubmitBtn.addEventListener('click', () => {
+      whatsappMessageEl.value = generateWhatsAppMessage();
+      whatsappModal.style.display = 'flex';
     });
 
     // Sidebar toggle
     hamburgerBtn.addEventListener('click', () => {
       sidebar.classList.toggle('active');
       overlay.classList.toggle('active');
+      if (sidebar.classList.contains('active')) {
+        updateMobileUI();
+      }
     });
 
     overlay.addEventListener('click', () => {
@@ -914,16 +1226,26 @@
       overlay.classList.remove('active');
     });
 
-    // About link click (example)
     aboutLink.addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent default link behavior
-        alert('Birthday Collection Tracker v1.0\n\nManage and track birthday fund collections easily.');
-        // Or close the sidebar
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
+      e.preventDefault();
+      alert('Birthday Collection Tracker v1.0\n\nManage and track birthday fund collections easily.');
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
     });
 
-    // Export functionality REMOVED
+    // Close modal on outside click
+    window.addEventListener('click', (e) => {
+      if (e.target === whatsappModal) {
+        whatsappModal.style.display = 'none';
+      }
+    });
+
+    // Accessibility
+    whatsappModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        whatsappModal.style.display = 'none';
+      }
+    });
 
     // ============= INITIALIZATION =============
     document.addEventListener('DOMContentLoaded', () => {
@@ -935,20 +1257,11 @@
         scheduleReminderCheck();
       }
 
-      window.addEventListener('click', (e) => {
-        if (e.target === whatsappModal) {
-          whatsappModal.style.display = 'none';
-        }
-      });
-    });
-
-    // ============= ACCESSIBILITY =============
-    whatsappModal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        whatsappModal.style.display = 'none';
+      // Initialize mobile UI if on mobile
+      if (window.innerWidth < 600) {
+        updateMobileUI();
       }
     });
   </script>
 </body>
 </html>
-
